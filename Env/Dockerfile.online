@@ -1,0 +1,19 @@
+FROM continuumio/miniconda3:latest  
+
+# 设置工作路径  
+WORKDIR /app  
+
+# 复制环境描述文件  
+COPY environment.yml /app/  
+RUN conda env create --file environment.yml && \
+    conda clean -a  
+
+# 激活 Conda 环境并安装额外的 pip 依赖  
+SHELL ["conda", "run", "-n", "LLM", "/bin/bash", "-c"]  
+RUN pip install flask==2.2.2 requests==2.28.1  
+
+# 清理无需保存的 cache  
+RUN conda clean -a && rm -rf /root/.cache/pip  
+
+# 启动命令  
+CMD ["python"]  
